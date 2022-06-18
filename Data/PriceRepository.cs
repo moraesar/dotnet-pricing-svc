@@ -4,9 +4,9 @@ namespace dotnet_pricing_svc.Data
 {
     public class PriceRepository : IPriceRepository
     {
-        private readonly PrincingContext _dbContext;
+        private readonly PricingContext _dbContext;
 
-        public PriceRepository(PrincingContext dbContext)
+        public PriceRepository(PricingContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -21,8 +21,8 @@ namespace dotnet_pricing_svc.Data
                 .Where(p => p.Ticker.Name == tickerName)
                 .Select(p => new ModelViewPrice() { 
                     TickerName = p.Ticker.Name,
-                    Date = p.Data,
-                    Price = p.Valor
+                    Date = p.Date,
+                    Price = p.Value
                 }).ToList();
         }
 
@@ -37,15 +37,15 @@ namespace dotnet_pricing_svc.Data
             {
                 Ticker t = _dbContext.Tickers.FirstOrDefault(t => t.Name == price.TickerName);
                 Price p = new Price() {
-                    Data = price.Date,
-                    Valor = price.Price,
+                    Date = price.Date,
+                    Value = price.Price,
                     TickerId = t.TickerId,
                 };
                 _dbContext.Prices.Add(p);
                 _dbContext.SaveChanges();
-                mvp = new ModelViewPrice() { Date = p.Data, Price = p.Valor, TickerName = p.Ticker.Name };
+                mvp = new ModelViewPrice() { Date = p.Date, Price = p.Value, TickerName = p.Ticker.Name };
 
-                return Tuple.Create(true, mvp);
+                return Tuple.Create(true, (ModelViewPrice?) mvp);
             }
             catch (System.Exception ex)
             {

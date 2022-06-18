@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 namespace dotnet_pricing_svc.Models
 {
 
-    public class PrincingContext : DbContext
+    public class PricingContext : DbContext
     {
         public DbSet<Ticker>? Tickers { get; set; }
         public DbSet<Price>? Prices { get; set; }
@@ -17,13 +17,21 @@ namespace dotnet_pricing_svc.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Price>()
-                .Property<DateTime>("Data")
+                .Property<DateTime>("Date")
                 .HasColumnType("timestamp without time zone");
+
+            modelBuilder.Entity<Price>()
+                .HasIndex(p => new { p.TickerId, p.Date }, "IX_Price_UQ")
+                .IsUnique();
             
             modelBuilder.Entity<Price>()
                 .HasOne(p => p.Ticker)
                 .WithMany(t => t.Prices)
                 .HasForeignKey("TickerId");
+
+            modelBuilder.Entity<Ticker>()
+                .HasIndex(t => t.Name, "IX_Ticker_UQ")
+                .IsUnique();
 
             modelBuilder.Entity<Ticker>().HasData(
                 new Ticker(){ TickerId = 1, Name = "FLRY3", Type = "Acao" },
@@ -31,29 +39,11 @@ namespace dotnet_pricing_svc.Models
             );
 
             modelBuilder.Entity<Price>().HasData(
-                new Price() { PriceId = 1, Data = new DateTime(2022, 6, 10), Valor = 15.16F, TickerId = 1 },
-                new Price() { PriceId = 2, Data = new DateTime(2022, 6, 9), Valor = 15.09F, TickerId = 1 },
-                new Price() { PriceId = 3, Data = new DateTime(2022, 6, 10), Valor = 8.89F, TickerId = 2 },
-                new Price() { PriceId = 4, Data = new DateTime(2022, 6, 9), Valor = 9.07F, TickerId = 2 }
+                new Price() { PriceId = 1, Date = new DateTime(2022, 6, 10), Value = 15.16F, TickerId = 1 },
+                new Price() { PriceId = 2, Date = new DateTime(2022, 6, 9), Value = 15.09F, TickerId = 1 },
+                new Price() { PriceId = 3, Date = new DateTime(2022, 6, 10), Value = 8.89F, TickerId = 2 },
+                new Price() { PriceId = 4, Date = new DateTime(2022, 6, 9), Value = 9.07F, TickerId = 2 }
             );
         }
-    }
-
-    public class Ticker
-    {
-        public int TickerId { get; set; }
-        public string Name { get; set; } = String.Empty;
-        public string Type { get; set; } = String.Empty;
-
-        public ICollection<Price> Prices { get; set; }
-    }
-
-    public class Price
-    {
-        public int PriceId { get; set; }        
-        public DateTime Data { get; set; }
-        public float Valor { get; set; }
-        public int TickerId { get; set; }
-        public Ticker Ticker { get; set; }
     }
 }

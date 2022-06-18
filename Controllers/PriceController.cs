@@ -8,10 +8,10 @@ namespace dotnet_pricing_svc.Controllers
     [Route("[controller]")]
     public class PriceController : ControllerBase
     {
-        private readonly PrincingContext _dbContext;
+        private readonly PricingContext _dbContext;
         private readonly ILogger<PriceController> _logger;
 
-        public PriceController(ILogger<PriceController> logger, PrincingContext dbContext)
+        public PriceController(ILogger<PriceController> logger, PricingContext dbContext)
         {
             _logger = logger;
             _dbContext = dbContext;
