@@ -26,8 +26,8 @@ namespace dotnet_pricing_svc.Models
                 .HasForeignKey("TickerId");
 
             modelBuilder.Entity<Ticker>().HasData(
-                new Ticker(){ TickerId = 1, Nome = "FLRY3", Tipo = "Acao" },
-                new Ticker(){ TickerId = 2, Nome = "ITSA4", Tipo = "Acao" }
+                new Ticker(){ TickerId = 1, Name = "FLRY3", Type = "Acao" },
+                new Ticker(){ TickerId = 2, Name = "ITSA4", Type = "Acao" }
             );
 
             modelBuilder.Entity<Price>().HasData(
@@ -42,8 +42,8 @@ namespace dotnet_pricing_svc.Models
     public class Ticker
     {
         public int TickerId { get; set; }
-        public string Nome { get; set; } = String.Empty;
-        public string Tipo { get; set; } = String.Empty;
+        public string Name { get; set; } = String.Empty;
+        public string Type { get; set; } = String.Empty;
 
         public ICollection<Price> Prices { get; set; }
     }

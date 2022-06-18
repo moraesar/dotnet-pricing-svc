@@ -1,3 +1,4 @@
+using dotnet_pricing_svc.Data;
 using dotnet_pricing_svc.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,16 +18,19 @@ namespace dotnet_pricing_svc.Controllers
         }
 
         [HttpGet(Name = "GetPrice")]
-        public IEnumerable<Price> Get()
+        public IEnumerable<ModelViewPrice> Get(string ticker)
         {
-            // Ticker ticker = new Ticker() {TickerId = 1, Nome = "FLRY3", Tipo = "Acao"};
-            // Price[] valores = new Price[2];
-            // valores[0] = new Price() {PrecoId = 1, Data = new DateTime(2022, 4, 2), Valor = 16.12F, Ticker = ticker};
-            // valores[1] = new Price() {PrecoId = 1, Data = new DateTime(2022, 4, 3), Valor = 14.15F, Ticker = ticker};
-            if (_dbContext.Prices == null)
-                return new List<Price>();
+            return new PriceRepository(_dbContext).GetAll(ticker);
+        }
+
+        [HttpPost(Name = "PostPrice")]
+        public ActionResult<ModelViewPrice> Post(ModelViewPrice price)
+        {
+            Tuple<bool, ModelViewPrice?> ret = new PriceRepository(_dbContext).Save(price);
+            if (!ret.Item1)
+                return StatusCode(500);
             
-            return _dbContext.Prices.Select(p => p);
+            return CreatedAtAction(null, null);
         }
     }
 }
