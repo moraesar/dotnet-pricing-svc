@@ -26,10 +26,13 @@ namespace dotnet_pricing_svc.Controllers
         [HttpPost(Name = "PostPrice")]
         public ActionResult<ModelViewPrice> Post(ModelViewPrice price)
         {
-            Tuple<bool, ModelViewPrice?> ret = new PriceRepository(_dbContext).Save(price);
-            if (!ret.Item1)
-                return StatusCode(500);
+            Tuple<DbActionResponsesEnum, ModelViewPrice?> ret = new PriceRepository(_dbContext).Save(price);
+             if (ret.Item1 == DbActionResponsesEnum.ItemAlreadyExists)
+                return StatusCode(409);
             
+            if (ret.Item1 != DbActionResponsesEnum.Ok)
+                return StatusCode(500);
+           
             return CreatedAtAction(null, null);
         }
     }

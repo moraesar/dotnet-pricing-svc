@@ -1,8 +1,9 @@
 using dotnet_pricing_svc.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace dotnet_pricing_svc.Data
 {
-    public class PriceRepository : IPriceRepository
+    public class PriceRepository : IRepository<ModelViewPrice>
     {
         private readonly PricingContext _dbContext;
 
@@ -11,7 +12,6 @@ namespace dotnet_pricing_svc.Data
             _dbContext = dbContext;
         }
         
-        //public ModelViewPrice GetByTickerName(string tikerName);
         public ICollection<ModelViewPrice> GetAll(string tickerName)
         {
             if (_dbContext.Prices == null)
@@ -26,16 +26,20 @@ namespace dotnet_pricing_svc.Data
                 }).ToList();
         }
 
-        public Tuple<bool, ModelViewPrice?> Save(ModelViewPrice price)
+        public Tuple<DbActionResponsesEnum, ModelViewPrice?> Save(ModelViewPrice price)
         {
             ModelViewPrice? mvp = null;
 
-            if (_dbContext.Prices == null)
-                return Tuple.Create(false, mvp);
+            if (_dbContext.Prices == null || _dbContext.Tickers == null)
+                return Tuple.Create(DbActionResponsesEnum.CannotAcessContext, mvp);
             
             try
             {
-                Ticker t = _dbContext.Tickers.FirstOrDefault(t => t.Name == price.TickerName);
+                Ticker? t = _dbContext.Tickers.FirstOrDefault(t => t.Name == price.TickerName);
+
+                if (t == null)
+                    return Tuple.Create(DbActionResponsesEnum.CannotAcessContext, mvp);
+
                 Price p = new Price() {
                     Date = price.Date,
                     Value = price.Price,
@@ -45,17 +49,17 @@ namespace dotnet_pricing_svc.Data
                 _dbContext.SaveChanges();
                 mvp = new ModelViewPrice() { Date = p.Date, Price = p.Value, TickerName = p.Ticker.Name };
 
-                return Tuple.Create(true, (ModelViewPrice?) mvp);
+                return Tuple.Create(DbActionResponsesEnum.Ok, (ModelViewPrice?) mvp);
+            }
+            catch (DbUpdateException)
+            {
+                return Tuple.Create(DbActionResponsesEnum.ItemAlreadyExists, (ModelViewPrice?) mvp);
             }
             catch (System.Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return Tuple.Create(false, mvp);
+                return Tuple.Create(DbActionResponsesEnum.GenericError, mvp);
             }
         }
-        //public ModelViewPrice Delete(ModelViewPrice price);
-        //TODO: ajustar DB para termos Ticker/Data únicos
-        //TODO: criar um TickerRepo
-        //TODO: retonar erro 400 quando o ticker não exitir
     }
 }
