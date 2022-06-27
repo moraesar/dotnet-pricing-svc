@@ -25,7 +25,7 @@ namespace dotnet_pricing_svc.Data
                 }).ToList();
         }
 
-        public Tuple<DbActionResponsesEnum, ModelViewTicker?> Save(ModelViewTicker ticker)
+        public Tuple<DbActionResponsesEnum, ModelViewTicker?> Save(ModelViewTicker value)
         {
             ModelViewTicker? mvt = null;
 
@@ -35,8 +35,8 @@ namespace dotnet_pricing_svc.Data
             try
             {
                 Ticker t = new Ticker() {
-                    Name = ticker.Name,
-                    Type = ticker.Type,
+                    Name = value.Name,
+                    Type = value.Type,
                 };
                 _dbContext.Tickers.Add(t);
                 _dbContext.SaveChanges();

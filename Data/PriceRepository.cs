@@ -26,7 +26,7 @@ namespace dotnet_pricing_svc.Data
                 }).ToList();
         }
 
-        public Tuple<DbActionResponsesEnum, ModelViewPrice?> Save(ModelViewPrice price)
+        public Tuple<DbActionResponsesEnum, ModelViewPrice?> Save(ModelViewPrice value)
         {
             ModelViewPrice? mvp = null;
 
@@ -35,14 +35,14 @@ namespace dotnet_pricing_svc.Data
             
             try
             {
-                Ticker? t = _dbContext.Tickers.FirstOrDefault(t => t.Name == price.TickerName);
+                Ticker? t = _dbContext.Tickers.FirstOrDefault(t => t.Name == value.TickerName);
 
                 if (t == null)
                     return Tuple.Create(DbActionResponsesEnum.CannotAcessContext, mvp);
 
                 Price p = new Price() {
-                    Date = price.Date,
-                    Value = price.Price,
+                    Date = value.Date,
+                    Value = value.Price,
                     TickerId = t.TickerId,
                 };
                 _dbContext.Prices.Add(p);
