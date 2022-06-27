@@ -22,6 +22,7 @@ sudo docker exec -it db-container psql -U postgres -d pricing
 ---
 
 ### dotnet Commands
+Commands to build Postgres database
 
 ```bash
 dotnet ef migrations add initial
@@ -31,7 +32,8 @@ dotnet ef database update
 ---
 
 ### Ubuntu Snap
-In case the dotnet installation has been done through snap:
+In case you're using the Ubuntu snap dotnet:
+
 ```
 export PATH="$PATH:~/.dotnet/tools"
 export DOTNET_ROOT=/snap/dotnet-sdk/current
