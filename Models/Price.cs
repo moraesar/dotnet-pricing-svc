@@ -9,6 +9,6 @@ namespace dotnet_pricing_svc.Models
         public DateTime Date { get; set; }
         public float Value { get; set; }
         public int TickerId { get; set; }
-        public Ticker? Ticker { get; set; }
+        public Ticker Ticker { get; set; } = null!;
     }
 }

@@ -6,8 +6,8 @@ namespace dotnet_pricing_svc.Models
 
     public class PricingContext : DbContext
     {
-        public DbSet<Ticker>? Tickers { get; set; }
-        public DbSet<Price>? Prices { get; set; }
+        public DbSet<Ticker> Tickers { get; set; } = null!;
+        public DbSet<Price> Prices { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

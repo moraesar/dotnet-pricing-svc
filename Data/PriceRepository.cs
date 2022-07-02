@@ -14,9 +14,6 @@ namespace dotnet_pricing_svc.Data
         
         public ICollection<ModelViewPrice> GetAll(string tickerName)
         {
-            if (_dbContext.Prices == null)
-                return new List<ModelViewPrice>();
-            
             return _dbContext.Prices
                 .Where(p => p.Ticker.Name == tickerName)
                 .Select(p => new ModelViewPrice() { 
@@ -30,9 +27,6 @@ namespace dotnet_pricing_svc.Data
         {
             ModelViewPrice? mvp = null;
 
-            if (_dbContext.Prices == null || _dbContext.Tickers == null)
-                return Tuple.Create(DbActionResponsesEnum.CannotAcessContext, mvp);
-            
             try
             {
                 Ticker? t = _dbContext.Tickers.FirstOrDefault(t => t.Name == value.TickerName);
