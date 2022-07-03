@@ -12,6 +12,24 @@ namespace dotnet_pricing_svc.Data
             _dbContext = dbContext;
         }
         
+        public ModelViewPrice GetOne(string tickerName, DateTime date)
+        {
+            var mvPrice = new ModelViewPrice();
+            var price = _dbContext.Prices
+                        .Where(p => p.Ticker.Name == tickerName && p.Date == date)
+                        .Include(p => p.Ticker)
+                        .FirstOrDefault();
+            
+            if (price != null)
+            {
+                mvPrice.TickerName = price.Ticker.Name;
+                mvPrice.Date = price.Date;
+                mvPrice.Price = price.Value;
+            }
+
+            return mvPrice;
+        }
+        
         public ICollection<ModelViewPrice> GetAll(string tickerName)
         {
             return _dbContext.Prices
@@ -20,7 +38,10 @@ namespace dotnet_pricing_svc.Data
                     TickerName = p.Ticker.Name,
                     Date = p.Date,
                     Price = p.Value
-                }).ToList();
+                })
+                .OrderByDescending(p => p.Date)
+                .Take(10)
+                .ToList();
         }
 
         public Tuple<DbActionResponsesEnum, ModelViewPrice?> Save(ModelViewPrice value)

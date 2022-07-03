@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace dotnet_pricing_svc.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("prices")]
     public class PriceController : ControllerBase
     {
         private readonly PricingContext _dbContext;
@@ -17,10 +17,16 @@ namespace dotnet_pricing_svc.Controllers
             _dbContext = dbContext;
         }
 
-        [HttpGet(Name = "GetPrice")]
-        public IEnumerable<ModelViewPrice> Get(string ticker)
+        [HttpGet("{ticker}")]
+        public IEnumerable<ModelViewPrice> GetAll(string ticker)
         {
             return new PriceRepository(_dbContext).GetAll(ticker);
+        }
+
+        [HttpGet("{ticker}/{date}")]
+        public ModelViewPrice Get(string ticker, DateTime date)
+        {
+            return new PriceRepository(_dbContext).GetOne(ticker, date);
         }
 
         [HttpPost(Name = "PostPrice")]

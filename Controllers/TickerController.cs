@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace dotnet_pricing_svc.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("tickers")]
     public class TickerController : ControllerBase
     {
         private readonly PricingContext _dbContext;
@@ -17,10 +17,10 @@ namespace dotnet_pricing_svc.Controllers
             _dbContext = dbContext;
         }
 
-        [HttpGet(Name = "GetTicker")]
-        public IEnumerable<ModelViewTicker> Get(string ticker)
+        [HttpGet("{ticker}")]
+        public ModelViewTicker Get(string ticker)
         {
-            return new TickerRepository(_dbContext).GetAll(ticker);
+            return new TickerRepository(_dbContext).GetOne(ticker);
         }
 
         [HttpPost(Name = "PostTicker")]

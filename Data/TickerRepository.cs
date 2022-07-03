@@ -12,17 +12,20 @@ namespace dotnet_pricing_svc.Data
             _dbContext = dbContext;
         }
 
-        public ICollection<ModelViewTicker> GetAll(string tickerName)
+        public ModelViewTicker GetOne(string tickerName)
         {
-            if (_dbContext.Tickers == null)
-                return new List<ModelViewTicker>();
+            var mvTicker = new ModelViewTicker();
+            var ticker = _dbContext.Tickers
+                        .Where(t => t.Name == tickerName)
+                        .FirstOrDefault();
             
-            return _dbContext.Tickers
-                .Where(t => t.Name == tickerName)
-                .Select(t => new ModelViewTicker() { 
-                    Name = t.Name,
-                    Type = t.Type
-                }).ToList();
+            if (ticker != null)
+            {
+                mvTicker.Name = ticker.Name;
+                mvTicker.Type = ticker.Type;
+            }
+
+            return mvTicker;
         }
 
         public Tuple<DbActionResponsesEnum, ModelViewTicker?> Save(ModelViewTicker value)
